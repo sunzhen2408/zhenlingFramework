@@ -13,7 +13,7 @@ function startSubscribeServer(ueList) {
     //nats.publish('foo', result);
     nats.subscribe('foo', function (msg) {
         console.log('Received a message: ' + msg.pm2p5CC);
-        cache.add(ueList,"temperature", msg.temperature);
+        cache.add(ueList,"temperature", msg.temperature/10);
         cache.add(ueList,"humidity", msg.humidity);
         cache.add(ueList,"pm2p5CC", msg.pm2p5CC);
         cache.add(ueList,"pm10CC", msg.pm10CC);

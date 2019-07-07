@@ -86,13 +86,29 @@ class SmokeSensor extends Thing {
         super('My Humidity Sensor',
             ['MultiLevelSensor'],
             'A web connected humidity sensor');
+this.pm2p5CC = new Value(0.0);
 this.temperature = new Value(0.0);
 this.humidity = new Value(0.0);
 this.pm2p5CC = new Value(0.0);
 this.pm10CC = new Value(0.0);
 this.VOCH2S = new Value(0.0);
 this.CH20NH3 = new Value(0.0);
-
+this.addProperty(
+    new Property(
+        this,
+        'pm2p5CC',
+        this.pm2p5CC,
+        {
+            '@type': 'LevelProperty',
+            title: 'pm2p5CC',
+            type: 'number',
+            description: 'The current pm2p5CC in %',
+            minimum: -100,
+            //此处涉及到最大值 就是前端配置的最大值
+            maximum: 1000,
+            // unit: 'percent',
+            readOnly: true,
+        }));
 this.addProperty(
     new Property(
         this,
@@ -124,24 +140,6 @@ this.addProperty(
             minimum: -100,
             maximum: 100,
             unit: 'percent',
-            readOnly: true,
-        }));
-
-// this.pm2p5CC = this.dataSturcture.get('pm2p5CC');
-this.addProperty(
-    new Property(
-        this,
-        'pm2p5CC',
-        this.pm2p5CC,
-        {
-            '@type': 'LevelProperty',
-            title: 'pm2p5CC',
-            type: 'number',
-            description: 'The current pm2p5CC in %',
-            minimum: -100,
-            //此处涉及到最大值 就是前端配置的最大值
-            maximum: 1000,
-            // unit: 'percent',
             readOnly: true,
         }));
 
