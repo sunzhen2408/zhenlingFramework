@@ -1,15 +1,13 @@
-// import SmokeSensor from '../webthing/frameworks.js'
 const moment = require("moment");
 const _struct = require('../utils/Struct/struct');
 const {TIME_FORMAT} = require('../utils/TimeUtils');
 const {ArrayBufferToBuffer} = require('../utils/BufferUtils');
-// const {readFromGPIO} = require('../webthing/frameworks');
 const AerialFsmFactory = require('./SensorFsmFactory');
 let sender = undefined;
 const {toBD} = require('../WiFICP/WifiMsgParser');
 
 const {crc16modbus} = require('crc');
-// const SmokeSensor = require('../webthing/frameworks');
+
 
 const queryStruct = new _struct.Struct({
     addressNum: 'uint8',
@@ -43,36 +41,9 @@ module.exports = {
      */
     handleMsg: (client, data) => {
         try {
-            // console.log(data);
             let ackMsg = ackStruct.read(data.buffer);
             ackMsg = toBD(ackStruct, ackMsg);
             const {addressNum, temperature, humidity, pm2p5CC, pm10CC,VOCH2S,CH20NH3} = ackMsg;
- ///a.(pm2)
-           // AerialFsmFactory.updateSensorData(ackMsg.addressNum, {temperature, humidity, pm2p5CC, pm10CC,VOCH2S,CH20NH3});
-            // console.log(ackMsg);
-
-            // SmokeSensor.readFromGPIO(pm2p5CC);
-            //console.log(pm2p5CC);
-            //readFromGPIO(pm2p5CC);
-            return {temperature, humidity, pm2p5CC, pm10CC,VOCH2S,CH20NH3};
-        } catch (e) {
-            console.log(e);
-        }
-    },
-     // readFromGPIO:(data)
-     // {
-     //
-     //
-
-    handleMsg2:(data) => {
-        try {
-            // console.log(data);
-            let ackMsg = ackStruct.read(data.buffer);
-            ackMsg = toBD(ackStruct, ackMsg);
-            const {addressNum, temperature, humidity, pm2p5CC, pm10CC,VOCH2S,CH20NH3} = ackMsg;
-
-            AerialFsmFactory.updateSensorData(ackMsg.addressNum, {temperature, humidity, pm2p5CC, pm10CC,VOCH2S,CH20NH3});
-            // console.log(ackMsg);
             return {temperature, humidity, pm2p5CC, pm10CC,VOCH2S,CH20NH3};
         } catch (e) {
             console.log(e);
@@ -85,10 +56,10 @@ module.exports = {
         } else {
             console.log('串口服务器已存在，重新替换为最新的服务器');
         }
+        // 将client 赋值给全局变量sender
         sender = client;
         AerialFsmFactory.initSensorData();
     },
-    //room id == sensor address(must begin 1====)
     queryData: (address) => {
         let sendData;
         sendData = {
@@ -107,11 +78,11 @@ module.exports = {
             if (sender !== undefined) {
                 // console.log(`发送消息到传感器[${address}] data:${JSON.stringify(sendData)}`);
                 //01 03 00 00 00 0A C5 CD
+                // 核心发送数据
                 sender.write(sendBuffer);
             } else {
                 console.log('串口服务器未连接，暂时无法发送');
             }
-           // console.log(sendData);
             return true;
         } catch (e) {
             console.log(e);

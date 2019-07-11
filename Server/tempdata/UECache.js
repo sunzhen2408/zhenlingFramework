@@ -1,10 +1,5 @@
 const moment = require("moment");
 
-// const TIME_FORMAT = require("../utils/TimeUtils").TIME_FORMAT;
-// const {insertUE} = require('./DBRouter');
-// var HashMap = require("hashmap");
-// var ueList = new HashMap;
-//const ueList = new Map();
 const siteUeList = new Map();
 module.exports = {
     /**

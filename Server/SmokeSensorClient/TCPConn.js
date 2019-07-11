@@ -1,6 +1,3 @@
-//  JavaScript source code
-//  新建server服务器
-//  接受所有的板子socket连接并且为其分配相应的处理事件
 const ServerConfig = require('../ServerConfig');
 var NATS = require('nats');
 var nats = NATS.connect({servers:ServerConfig.NATSCONFIG.SERVERIPS,json: true});
@@ -8,19 +5,12 @@ var nats = NATS.connect({servers:ServerConfig.NATSCONFIG.SERVERIPS,json: true});
 const net = require('net');
 const {handleMsg, initSender} = require('./SensorMsgHandler');
 const {removeAerialFsm} = require('./SensorFsmFactory');
-// const ServerConfig = require('../ServerConfig');
-//const SmokeSensor = require('../webthing/frameworks');
 const {smokeSensorServerCfg} = ServerConfig;
 const PORT = smokeSensorServerCfg.port;
 const aerialServer = net.createServer();
 const hashmap = require('hashmap');
-//get the configuration of the server for Lte devices
 const allClientList = [];
 const clientMap = new hashmap.HashMap;//仅存放LTE设备对应的 client，<boardsn,client>
-
-// 传入net.createServer()的回调函数将作为”connection“事件的处理函数
-// 在每一个“connection”事件中，该回调函数接收到的socket对象是唯一的
-// 创建一个TCP服务器实例，调用listen函数开始监听指定端口
 const {emit} = require('../NATS/NATSRouter');
 /*启动接收Lte Client的Server*/
 function startSmokeSensorServer() {
@@ -36,44 +26,8 @@ function startSmokeSensorServer() {
         allClientList.push(client);
         client.on('data', function (data) {
             if (data != null) {
-                // Simple Publisher
-
-                //接收返回值 handleMsg
                var result = handleMsg(client, data);
-               // const sensor = new SmokeSensor(result.humidity);
-               // sensor.level.notifyOfExternalUpdate(result.humidity);
-
-
-
-//                  console.log(result);
-
-
-
-
-               //return result;
-//NATS
-// emit
-//                 emit('socketio.CurrentSiteData', {
-//
-//                     data: {
-//                         dataType: 'FaceRecognition',
-//                         currentFaceData: {
-//                             ...currentFaceData,
-//                             mostMatchImsi: analysisData.analysisResult[0] ? analysisData.analysisResult[0].imsi : ''
-//                         },
-//                         ...analysisData
-//                     },
-//                     site_id: site_id || 'CA00001',
-//                     site_type: 'Camera',
-//                     time: moment().format(TIME_FORMAT),
-//                 });
-
-                emit('foo',result);
-
-
-              //  nats.publish('foo', result);
-
-
+               emit('foo',result);
             }
         });
 
@@ -101,12 +55,6 @@ function broadcast() {
         if (allClientList[i].connecting) {
         } else {
             /*socket不可写，则将其从列表中移除*/
-            // let mAerialSN = allClientList[i].name;
-            // if (mAerialSN.length !== 0) {
-            //     // let ifRemoved = removeAerialFsm(mAerialSN);
-            //     console.warn("设备[" + mAerialSN + "]断开连接，状态机已移除");
-            // }
-
             const {closeclock} = require("./SensorFsmFactory");
             closeclock();
             //移除LTE设备的client和状态机
@@ -123,4 +71,4 @@ function broadcast() {
     }
 }
 module.exports.startSmokeSensorServer = startSmokeSensorServer;
-//startSmokeSensorServer();
+

@@ -41,8 +41,9 @@ module.exports = {
     aerialCfg: {
         serverPort: "8098",
     },
-    alarmServerCfg:{
-        port:6000
+
+    alarmServerCfg: {
+        port: 6000
     },
     smokeSensorServerCfg: {
         port: 1000

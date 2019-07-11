@@ -30,7 +30,6 @@ function initNATS(nats, config) {
     });
 }
 
-// 更改地址  先启动NATSROUTER，再去启动client
 module.exports = {
     NATSClient: function (config) {
         this.nats = NATS.connect({

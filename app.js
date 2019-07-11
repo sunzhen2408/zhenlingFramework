@@ -86,20 +86,7 @@ app.use(function(err, req, res, next) {
 
 
 setTimeout(() => {
- // initGroups();
-  // startAerialServer();
-  // bpServer.startBPServer();
-  // webServer.startWebServer(app);
-  //startSmokeSensorServer();
-  //console.log("startsmoke:Wq!");
-  //  console.log("result");
-//   startONOFFServer();
-// // startWifiServer();
   runServer();
-  //startClient();
-//服务端开始向web前端进行数据推送
-   //_WebMsgHandle.startMsgPush();
-//  UECache.startSend();
 }, 6* 1000);
 console.log("yes");
 module.exports = app;
