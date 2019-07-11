@@ -86,6 +86,7 @@ app.use(function(err, req, res, next) {
 
 
 setTimeout(() => {
+  //函数路口
   runServer();
 }, 6* 1000);
 console.log("yes");

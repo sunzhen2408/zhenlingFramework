@@ -197,17 +197,23 @@ class AlarmSensor extends Thing {
 }
 
 function runServer() {
+    //实例化传感器
     const sensor = new SmokeSensor();
     const sensor2 = new AlarmSensor();
+    // 启动socket server
     startSmokeSensorServer();
     startSubscribeServer(ueList);
-//在startSmokeSenSor之前启动
+    // 实例化 webthingserver
+
     const server = new WebThingServer(new SingleThing(sensor),
         8181);
     const server2 = new WebThingServer(new SingleThing(sensor2),
         8182);
+    // 启动webthing server
     server.start().catch(console.error);
     server2.start().catch(console.error);
+
+    // 启动警铃传感器的socket server
     startAlarmSensorServer()
 }
 

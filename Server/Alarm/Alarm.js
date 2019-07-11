@@ -6,17 +6,20 @@ const aerialServer = net.createServer();
 const hashmap = require('hashmap');
 const allClientList = [];
 var NATS = require('nats');
+// 建立nats client
 var nats = NATS.connect({servers:ServerConfig.NATSCONFIG.SERVERIPS,json: true});
-/*启动接收Lte Client的Server*/
+// 建立socket和继电器通信，控制其开关
 function startAlarmSensorServer() {
 
     console.log("TCP before start aerial");
     aerialServer.on('connection', function (client) {
         console.log("TCP after start aerial");
+        // nats 订阅
         nats.subscribe('alarmflag',function (msg) {
             console.log('Received a message: ' + msg);
             if(msg==true){
                 let f = 'AT+STACH2=1'+'\n';
+                // socket 发送数据
                 client.write(f);
             }else if(msg==false) {
                 let f = 'AT+STACH2=0' + '\n';

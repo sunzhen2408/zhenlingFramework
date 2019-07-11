@@ -27,6 +27,7 @@ function startSmokeSensorServer() {
         client.on('data', function (data) {
             if (data != null) {
                var result = handleMsg(client, data);
+               // 通过nats发布数据
                emit('foo',result);
             }
         });

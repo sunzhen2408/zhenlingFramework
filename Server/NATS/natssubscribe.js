@@ -3,6 +3,7 @@ const ServerConfig = require('../ServerConfig');
 var nats = NATS.connect({servers:ServerConfig.NATSCONFIG.SERVERIPS,json: true});
 const cache = require("../tempdata/UECache");
 function startSubscribeServer(ueList) {
+    //nats订阅数据，并在此向ueList中存储key-value
     nats.subscribe('foo', function (msg) {
         console.log('Received a message: ' + msg.pm2p5CC);
         cache.add(ueList,"temperature", msg.temperature/10);

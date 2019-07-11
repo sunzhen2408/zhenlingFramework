@@ -2,7 +2,7 @@ const NATS = require('nats');
 
 function initNATS(nats, config) {
     nats.on('connect', function () {
-        console.log('连接成功');
+        console.log('NATS连接成功');
     });
 
     nats.on('error', function (err) {
@@ -38,6 +38,7 @@ module.exports = {
             reconnect: true,
             json: true
         });
+        // nats的publish 函数，本代码所以的push都通过NATSRouter 调用本函数
         this.publish = (eventID, data) => {
             if (this.nats.connected) {
                 this.nats.publish(eventID, data);
@@ -46,7 +47,7 @@ module.exports = {
                 console.log(`事件${eventID}未发送,请检查NATS服务器是否联通`);
             }
         };
-
+        // 本代码没有使用此方法，每次订阅都是单独新建的NATS client 因为nats 是一对多
         this.subscribe = (eventID,ueList, callback) => {
             if (this.nats.connected) {
                 this.nats.subscribe(eventID, callback);
