@@ -45,6 +45,9 @@ module.exports = {
     alarmServerCfg: {
         port: 6000
     },
+    touchServerCfg: {
+        port: 6000
+    },
     smokeSensorServerCfg: {
         port: 1000
     },
