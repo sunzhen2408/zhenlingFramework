@@ -56,7 +56,7 @@ module.exports = {
     },
     NATSCONFIG: {
         // SERVERIPS: ['nats://15.200.19.143:4222'],
-        SERVERIPS: ['nats://15.200.19.127:4222'],
+        SERVERIPS: ['nats://192.168.43.50:4222'],
         reconnectDelay: 2 * 1000
     }
 

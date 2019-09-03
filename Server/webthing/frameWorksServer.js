@@ -1,16 +1,18 @@
 const SensorMsgHandler = require('../SmokeSensorClient/SensorMsgHandler');
 const SensorFsmFactory = require('../SmokeSensorClient/SensorFsmFactory');
-const {startClient} = require('./client');
+// const {startClient} = require('./client');
 const ServerConfig = require('../ServerConfig');
 var humidity = undefined;
 var NATS = require('nats');
 var nats = NATS.connect({servers: ServerConfig.NATSCONFIG.SERVERIPS, json: true});
 const {startSmokeSensorServer} = require('../SmokeSensorClient/TCPConn');
 const {startAlarmSensorServer} = require('../Alarm/Alarm')
+const {startTouchSensorServer} = require('../Touch/touch')
 const {startSubscribeServer} = require('../NATS/natssubscribe');
 const ueList = new Map();
 const {emit} = require('../NATS/NATSRouter');
 const cache = require("../tempdata/UECache");
+
 const {
     Action,
     Event,
@@ -35,6 +37,23 @@ class SmokeSensor extends Thing {
         this.pm10CC = new Value(0.0);
         this.VOCH2S = new Value(0.0);
         this.CH20NH3 = new Value(0.0);
+        this.Id = new Value(1);
+        this.addProperty(
+            new Property(
+                this,
+                'Id',
+                this.Id,
+                {
+                    // '@type': 'MotionProperty',
+                    title: 'Id',
+                    type: 'number',
+                    description: 'The current groupId in %',
+                    minimum: -100,
+                    //此处涉及到最大值 就是前端配置的最大值
+                    maximum: 1000,
+                    // unit: 'percent',
+                    readOnly: true,
+                }));
         this.addProperty(
             new Property(
                 this,
@@ -42,6 +61,7 @@ class SmokeSensor extends Thing {
                 this.pm2p5CC,
                 {
                     '@type': 'LevelProperty',
+                    // '@type': 'BrightnessProperty',
                     title: 'pm2p5CC',
                     type: 'number',
                     description: 'The current pm2p5CC in %',
@@ -59,6 +79,7 @@ class SmokeSensor extends Thing {
 
                 {
                     '@type': 'LevelProperty',
+                    // '@type': 'ColorTemperatureProperty',
                     title: 'Temperature',
                     type: 'number',
                     description: 'The current temperature in %',
@@ -76,6 +97,7 @@ class SmokeSensor extends Thing {
                 this.humidity,
                 {
                     '@type': 'LevelProperty',
+                    // '@type': 'InstantaneousPowerProperty',
                     title: 'Humidity',
                     type: 'number',
                     description: 'The current humidity in %',
@@ -93,6 +115,7 @@ class SmokeSensor extends Thing {
                 this.pm10CC,
                 {
                     '@type': 'LevelProperty',
+                    // '@type': 'CurrentProperty',
                     title: 'pm10CC',
                     type: 'number',
                     description: 'The current pm10CC in %',
@@ -144,12 +167,14 @@ class SmokeSensor extends Thing {
             const data_pm10CC = this.readFromGPIO("pm10CC");
             const data_VOCH2S = this.readFromGPIO("VOCH2S");
             const data_CH20NH3 = this.readFromGPIO("CH20NH3");
+            const data_groupid = this.readFromGroupID("GroupID");
             this.temperature.notifyOfExternalUpdate(data_temperature);
             this.humidity.notifyOfExternalUpdate(data_humidity);
             this.pm2p5CC.notifyOfExternalUpdate(data_pm2p5CC);
             this.pm10CC.notifyOfExternalUpdate(data_pm10CC);
             this.VOCH2S.notifyOfExternalUpdate(data_VOCH2S);
             this.CH20NH3.notifyOfExternalUpdate(data_CH20NH3);
+            //this.groupId.notifyOfExternalUpdate(data_groupid);
         }, 1000);
     }
 
@@ -158,16 +183,20 @@ class SmokeSensor extends Thing {
      */
 
     readFromGPIO(key) {
-        let ueInfos = ueList.get(key);
-        if (ueInfos != undefined) {
-            var len = ueInfos.length;
-            ueInfos = ueInfos.slice(len - 1, len);  //slice
-            return ueInfos;
-        }
-        return 0;
+        // let ueInfos = ueList.get(key);
+        // if (ueInfos != undefined) {
+        //     var len = ueInfos.length;
+        //     ueInfos = ueInfos.slice(len - 1, len);  //slice
+        //     return ueInfos;
+        // }
+        // return 0;
+        return Math.abs(70.0 * Math.random() * (-0.5 + Math.random()));
 
     }
-
+//
+    readFromGroupID(key){
+        return 1;
+    }
 
 }
 
@@ -176,6 +205,23 @@ class AlarmSensor extends Thing {
         super('My Alarm Sensor',
             ['Alarm'],
             'A web  alarm sensor');
+        this.groupId = new Value(1);
+        this.addProperty(
+            new Property(
+                this,
+                'groupId',
+                this.groupId,
+                {
+                    // '@type': 'MotionProperty',
+                    title: 'groupId',
+                    type: 'number',
+                    description: 'The current groupId in %',
+                    minimum: -100,
+                    //此处涉及到最大值 就是前端配置的最大值
+                    maximum: 1000,
+                    // unit: 'percent',
+                    readOnly: true,
+                }));
         this.addProperty(
             new Property(
                 this,
@@ -213,8 +259,14 @@ function runServer() {
     server.start().catch(console.error);
     server2.start().catch(console.error);
 
-    // 启动警铃传感器的socket server
-    startAlarmSensorServer()
+    // // 启动警铃传感器的socket server
+    //  startAlarmSensorServer()
+
+    //touch
+    startTouchSensorServer();
+    // nats.su
+    // emit('alarmflag', "kkk");
+
 }
 
 module.exports.runServer = runServer;
